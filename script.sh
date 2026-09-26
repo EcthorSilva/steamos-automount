@@ -67,7 +67,19 @@ for block in "${BLOCKS[@]}"; do
     DEV_SIZE[$index]="$SIZE"
     DEV_UUID[$index]="${UUID:-n/a}"
 
+    PARENT_DISK=$(echo "$NAME" | sed 's/[0-9]*$//')
+    ROTATIONAL=$(cat /sys/block/$PARENT_DISK/queue/rotational 2>/dev/null)
+
+    if [ "$ROTATIONAL" = "0" ]; then
+        TYPE_RAW="SSD"
+    elif [ "$ROTATIONAL" = "1" ]; then
+        TYPE_RAW="HDD"
+    else
+        TYPE_RAW="N/A"
+    fi
+
     DEV_STR=$(printf "%-8s" "/dev/$NAME")
+    TYPE_STR=$(printf "%-5s" "$TYPE_RAW")
     SIZE_STR=$(printf "%-8s" "${SIZE:-N/A}")
     
     if [ "${FSTYPE:-n/a}" != "ext4" ]; then
@@ -80,7 +92,7 @@ for block in "${BLOCKS[@]}"; do
         FMT_COL="${GREEN}${FMT_STR}${RESET}"
     fi
 
-    echo -e "  ${BOLD}[$index]${RESET} ${CYAN}${DEV_STR}${RESET}  ${BOLD}|${RESET}  Size: ${BOLD}${SIZE_STR}${RESET}  ${BOLD}|${RESET}  Format: $FMT_COL"
+    echo -e "  ${BOLD}[$index]${RESET} ${CYAN}${DEV_STR}${RESET}  ${BOLD}|${RESET}  Type: ${BOLD}${TYPE_STR}${RESET}  ${BOLD}|${RESET}  Size: ${BOLD}${SIZE_STR}${RESET}  ${BOLD}|${RESET}  Format: $FMT_COL"
     ((index++))
 done
 
