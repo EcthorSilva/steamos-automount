@@ -11,7 +11,12 @@ CYAN='\033[0;36m'
 
 # Automatic privilege elevation
 if [ "$EUID" -ne 0 ]; then
-  exec sudo "$0" "$@"
+  if [ -f "$0" ] && [ "$0" != "bash" ]; then
+    exec sudo "$0" "$@"
+  else
+    echo "Privileges required. Re-running with sudo..."
+    exec sudo bash -c "$(curl -sSL https://raw.githubusercontent.com/EcthorSilva/steamos-automount/main/script.sh)" -- "$@"
+  fi
 fi
 
 clear
