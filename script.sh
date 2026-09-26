@@ -85,7 +85,7 @@ for block in "${BLOCKS[@]}"; do
 done
 
 echo ""
-read -p "$(echo -e "${BOLD}Select device number to configure (1-$((index-1))): ${RESET}")" CHOICE
+read -p "$(echo -e "${BOLD}Select device number to configure (1-$((index-1))): ${RESET}")" CHOICE < /dev/tty
 
 if ! [[ "$CHOICE" =~ ^[0-9]+$ ]] || [ "$CHOICE" -lt 1 ] || [ "$CHOICE" -ge "$index" ]; then
     echo -e "\n${RED}[X] Invalid choice! Operation canceled.${RESET}"
@@ -110,7 +110,7 @@ if [ -n "$SELECTED_UUID" ] && [ "$SELECTED_UUID" != "n/a" ]; then
         echo -e "    • Current Mount Point: ${BOLD}$OLD_MOUNT_POINT${RESET}"
         echo -e "    • Active Service:      ${BOLD}$OLD_SERVICE_NAME${RESET}\n"
         
-        read -p "$(echo -e "${BOLD}Do you want to remove the previous config and reconfigure? [y/N]: ${RESET}")" RECONFIG
+        read -p "$(echo -e "${BOLD}Do you want to remove the previous config and reconfigure? [y/N]: ${RESET}")" RECONFIG < /dev/tty
 
         if [[ "$RECONFIG" =~ ^[Yy]$ ]]; then
             echo -e "\n${BLUE}--> Removing old mount service...${RESET}"
@@ -142,7 +142,7 @@ echo -e "${CYAN}------------------------------------------------------${RESET}\n
 if [ "$SELECTED_FSTYPE" != "ext4" ]; then
     echo -e "${YELLOW}${BOLD}[!] WARNING: Device is not formatted as EXT4.${RESET}"
     echo -e "    Steam requires native ext4 filesystem on Linux.\n"
-    read -p "$(echo -e "${BOLD}Do you want to format $TARGET_DEV to EXT4 now? [y/N]: ${RESET}")" CONFIRM_FORMAT
+    read -p "$(echo -e "${BOLD}Do you want to format $TARGET_DEV to EXT4 now? [y/N]: ${RESET}")" CONFIRM_FORMAT < /dev/tty
 
     if [[ "$CONFIRM_FORMAT" =~ ^[Yy]$ ]]; then
         echo -e "\n${BLUE}--> Unmounting and partitioning $TARGET_DEV...${RESET}"
@@ -177,7 +177,7 @@ fi
 
 SELECTED_UUID=$(blkid -s UUID -o value "$TARGET_DEV")
 
-read -p "$(echo -e "${BOLD}Enter a name for the mount point (e.g. ssd1tb, games_hd): ${RESET}")" MOUNT_NAME
+read -p "$(echo -e "${BOLD}Enter a name for the mount point (e.g. ssd1tb, games_hd): ${RESET}")" MOUNT_NAME < /dev/tty
 CLEAN_NAME=$(echo "$MOUNT_NAME" | sed 's/[^a-zA-Z0-9_-]//g')
 
 if [ -z "$CLEAN_NAME" ]; then
@@ -270,7 +270,7 @@ chown deck:deck /home/deck/.steam/steam/config/libraryfolders.vdf 2>/dev/null
 
 # File manager shortcut (Dolphin)
 echo ""
-read -p "$(echo -e "${BOLD}Add shortcut to File Manager (Dolphin)? [Y/n]: ${RESET}")" ADD_SHORTCUT
+read -p "$(echo -e "${BOLD}Add shortcut to File Manager (Dolphin)? [Y/n]: ${RESET}")" ADD_SHORTCUT < /dev/tty
 
 if [[ ! "$ADD_SHORTCUT" =~ ^[Nn]$ ]]; then
     SUDO_USER_HOME=$(eval echo "~${SUDO_USER:-deck}")
